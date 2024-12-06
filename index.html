@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Swiper demo</title>
+    <!-- Link Swiper's CSS -->
+    <link rel="stylesheet" href="css/swiper.min.css" />
+
+    <!-- Demo styles -->
+    <style>
+      html,
+      body {
+        position: relative;
+        height: 100%;
+      }
+
+      * {
+        list-style: none;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #eee;
+        font-family: sans-serif;
+        font-size: 14px;
+        color: #000;
+        margin: 0;
+        padding: 0;
+        background-color: rgb(146, 139, 160);
+      }
+      .swiper-container {
+        width: 100%;
+        height: 100%;
+        background-color: rgb(179, 189, 196);
+        transition: 1s background-color 1.3s;
+      }
+      .swiper-wrapper {
+        transition-delay: 1s;
+        transition-timing-function: cubic-bezier(0.5, 0, 0, 1);
+      }
+      .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+      }
+      .title {
+        transition-delay: 1s;
+        z-index: 10;
+      }
+      .title h3 {
+        font-weight: 700;
+        font-size: calc(55px + 54 * ((53vw + 53vh) - 520px) / 820);
+        letter-spacing: -1px;
+        color: rgba(255, 255, 255, 0);
+        -webkit-text-stroke: 2px rgb(229, 113, 4);
+      }
+      .img-box {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        transform: scale(0.6, 0.6);
+        transition-duration: 1s;
+        transition-property: transform;
+        transition-timing-function: cubic-bezier(0.5, 0, 0, 1);
+        opacity: 0.9;
+        overflow: hidden;
+      }
+      .img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.2, 1.2) translateX(50%);
+        transition-timing-function: cubic-bezier(0.5, 0, 0, 1);
+        transition-property: transform;
+      }
+      .button-prev,
+      .button-next {
+        transition: 0.5s;
+        outline: none;
+        position: absolute;
+        width: 140px;
+        z-index: 10;
+        top: 65vh;
+        transform: translateY(-34px);
+        cursor: pointer;
+      }
+      .button-prev {
+        left: 4vw;
+      }
+      .button-next {
+        right: 4vw;
+      }
+      .button.disabled {
+        opacity: 0.2;
+        cursor: default;
+      }
+      #arrow-svg-home {
+        transform: translateY(353px);
+      }
+      .button-next #arrow-svg-home {
+        transform: translateY(353px) rotateY(180deg);
+        transform-origin: 80px 0px 0px;
+      }
+      svg {
+        transition: 0.5s;
+      }
+      .cls-1 {
+        transition: 0.5s;
+        opacity: 0.4;
+        transform-origin: -20px 40px;
+        opacity: 1;
+      }
+      .cls-4 {
+        transition: 0.5s;
+        stroke-width: 2px;
+        stroke: #fff;
+        fill: none;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        opacity: 0.4;
+        transform-origin: 0px 0px 0px;
+      }
+      #arrow-trg {
+        transition: 0.5s;
+        fill: #fff;
+        transform: rotateY(180deg) translate(-53px, 39px);
+      }
+      #line {
+        transition: 0.5s;
+        stroke: #fff;
+        transform: translate(50px, 42px);
+      }
+      .button-prev:not(.disabled):hover svg {
+        transform: translateX(-25px);
+      }
+      .button-next:not(.disabled):hover svg {
+        transform: translateX(25px);
+      }
+      .button:not(.disabled):hover .cls-1 {
+        transform: scale(1.1);
+      }
+      .button:not(.disabled):hover .cls-4 {
+        stroke-dasharray: 2px;
+        stroke-dashoffset: 2px;
+        opacity: 1;
+      }
+      .button:not(.disabled):hover #arrow-trg {
+        transform: rotateY(180deg) translate(-37px, 39px);
+      }
+      .button:not(.disabled):hover #line {
+        transform: translate(35px, 42px) scaleX(0.33);
+      }
+
+      .nav {
+        border-radius: 10px;
+
+        height: 40px;
+        background: linear-gradient(
+          90deg,
+          rgb(170, 96, 66),
+          rgb(240, 191, 150)
+        );
+        box-shadow: 0 1px 2px #666;
+      }
+
+      .nav ul li {
+        float: left;
+        line-height: 40px;
+        text-align: center;
+        width: 100px;
+      }
+      .nav ul li a {
+        font-size: calc(8px + 4 * ((100vw - 320px) / 480));
+        letter-spacing: 1px;
+        color: rgb(229, 180, 160);
+        -webkit-text-stroke: 1px rgb(248, 246, 244);
+        /* color: rgb(213, 33, 46); */
+        display: block;
+        border-radius: 7px;
+      }
+      .nav ul li a:hover {
+        background-color: rgb(229, 180, 160);
+      }
+      .nav .droplist li a {
+        font-size: calc(5px + 4 * ((100vw - 320px) / 480));
+      }
+      .droplist {
+        display: none;
+        position: absolute;
+      }
+      .nav ul li:hover .droplist {
+        display: block;
+      }
+      .content {
+        height: 1000px;
+        background: url(./images/tiga.jpg) no-repeat;
+        background-size: 100% 100%;
+        background-attachment: fixed;
+        padding-top: 45px;
+        display: grid;
+        grid-template-columns: 1fr 1.8fr 1fr;
+        grid-template-rows: 1.5fr 2fr 0.5fr;
+        grid-template-areas:
+          "a b c"
+          "g e c"
+          "g e c";
+        gap: 20px;
+      }
+
+      .nav.fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000; /* 确保它在其他内容之上 */
+      }
+      .bottom {
+        background-color: rgb(206, 144, 109);
+      }
+      .backcolor {
+        background-color: rgba(189, 175, 193, 0.9);
+      }
+      .a {
+        position: relative;
+        grid-area: a;
+      }
+      .a .imgbox {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto;
+      }
+      .a .imgbox img {
+        width: 140%;
+      }
+      .b {
+        border: 5px solid rgb(202, 139, 104);
+        background-color: rgb(203, 140, 105);
+        grid-area: b;
+      }
+
+      .b img {
+        width: 100%;
+        height: 100%;
+        /* margin: 0 139px; */
+      }
+      .c {
+        grid-area: c;
+        background: url(images/meibus02.jpg) no-repeat;
+        
+      }
+      .e {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        grid-area: e;
+        align-items: center;
+      }
+      .g {
+        grid-area: g;
+      }
+      .g  .text{
+        width: 100%;
+      /* margin:100px 0; */
+      }
+      .g  .text p{
+        padding-bottom: 45px;
+      }
+      .g p{
+        border-bottom: 2px solid rgb(185, 117, 85);
+      }
+      .g h1{
+        text-align: center;
+        border-bottom: 2px solid rgb(185, 117, 85);
+      }
+      .content .a .bac {
+        height: 80px;
+        background-color: rgb(178, 106, 75);
+      }
+      .a p {
+        font-weight: 700;
+        font-size:calc(50px + 4 * ((100vw - 320px) / 480));
+        position: absolute;
+        bottom: 40%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-bottom: 7px solid #ccc;
+      }
+      .a a {
+        position: absolute;
+        bottom: 138px;
+        left: 41%;
+      }
+      .e img {
+        width: 30%;
+        height: 30%;
+        border: 1px solid rgb(202, 139, 104);
+      }
+      .e img:hover {
+        transform: scale(2);
+        transition: 0.5s;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Swiper -->
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="title" data-swiper-parallax="-130%">
+            <h3>Welcome</h3>
+          </div>
+          <div class="img-box">
+            <img src="images/asuna01.png" style="transform: translateX(0)" />
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="title" data-swiper-parallax="-130%">
+            <h3>To</h3>
+          </div>
+          <div class="img-box"><img src="images/asuna01.png" /></div>
+          <!-- 首页制作 -->
+          <div>
+            <span>
+              <ul>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+              </ul>
+            </span>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="title" data-swiper-parallax="-130%">
+            <h3>My blog</h3>
+          </div>
+          <div class="img-box"><img src="images/asuna01.png" /></div>
+        </div>
+      </div>
+      <div class="button-prev button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 350 160 90">
+          <g id="arrow-svg-home">
+            <g id="circ" class="cls-1">
+              <circle cx="42" cy="42" r="40" class="cls-4"></circle>
+            </g>
+            <g id="arrow">
+              <path
+                id="arrow-trg"
+                d="M.983,6.929,4.447,3.464.983,0,0,.983,2.482,3.464,0,5.946Z"></path>
+            </g>
+            <path id="line" d="M120,0H0" class="cls-3"></path>
+          </g>
+        </svg>
+      </div>
+      <!--左箭头-->
+      <div class="button-next button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 350 160 90">
+          <g id="arrow-svg-home">
+            <g id="circ" class="cls-1">
+              <circle cx="42" cy="42" r="40" class="cls-4"></circle>
+            </g>
+            <g id="arrow">
+              <path
+                id="arrow-trg"
+                d="M.983,6.929,4.447,3.464.983,0,0,.983,2.482,3.464,0,5.946Z"
+                class="cls-2"></path>
+            </g>
+            <path id="line" d="M120,0H0" class="cls-3"></path>
+          </g>
+        </svg>
+      </div>
+      <!--右箭头-->
+    </div>
+    <div class="nav">
+      <ul>
+        <li>
+          <a href="">关于我</a>
+          <ul class="droplist">
+            <li><a href="">梦比优斯</a></li>
+            <li><a href="">希卡利</a></li>
+            <li><a href="">戴拿</a></li>
+            <li><a href="">高斯</a></li>
+            <li><a href="">欧布</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="">关于我</a>
+          <ul class="droplist">
+            <li><a href="">奥特之王</a></li>
+            <li><a href="">雷杰多</a></li>
+            <li><a href="">赛迦</a></li>
+            <li><a href="">诺亚</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="">关于我</a>
+          <ul class="droplist">
+            <li><a href="">赛罗</a></li>
+            <li><a href="">戴拿</a></li>
+            <li><a href="">高斯</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="">关于我</a>
+          <ul class="droplist">
+            <li><a href="">盖亚</a></li>
+            <li><a href="">阿古茹</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="content">
+      <div class="backcolor a">
+        <div class="bac"></div>
+        <div class="imgbox"><img src="images/meibus.jpg" alt="" /></div>
+        <div>
+          <p>meibus</p>
+          <a
+            href="https://baike.baidu.com/item/%E6%A2%A6%E6%AF%94%E4%BC%98%E6%96%AF%E5%A5%A5%E7%89%B9%E6%9B%BC/2684129"
+            >Learn more</a
+          >
+        </div>
+      </div>
+      <div class="backcolor b"><img src="images/meibus02.gif" alt="" /></div>
+      <div class="backcolor c"></div>
+      <div class="backcolor g">
+        <h1>个人简介</h1>
+        <div class="text"><p>
+          <h3>名字由来</h3>
+           梦比优斯奥特曼，英文名为Ultraman
+          Mebius，源于莫比乌斯带，象征无限之意。
+        </p>
+        <p>
+          <h3>身份来历</h3>
+          梦比优斯奥特曼是受奥特之父的命令被派遣来到地球的一名奥特战士。教官是泰罗奥特曼，他的变身姿势和战斗技巧有着和泰罗一样的共同点。来到地球时看见了被黑洞吞噬的地球人宏人，被他的精神所感动，自己变为宏人的姿态在地球活动。作为被帝诺佐鲁全灭的CREW
+          GUYS后的一个新人入队。
+        </p>
+        <p>
+          <h3>人间体 </h3>
+          日比野未来是由梦比优斯奥特曼直接化身而成的人间体
+          [8]，在一次宇宙航行中，宇宙飞船失事，船长的儿子坂宏人为了拯救其他人，牺牲了自己，被吸入了宇宙空间。梦比优斯却没有及时救下宏人，为此心怀内疚。于是，梦比优斯以宏人的形象，化身为地球人，名字日比野未来是由坂哲郎对梦比优斯的祝福语“愿你在这星球上未来的每一日都能幸福”演化而来。
+        </p></div>
+        
+      </div>
+      <div class="backcolor e">
+          <img src="images/m06.jpg" alt=""><img src="images/m01.jpg" alt=""><img src="images/m02.jpg" alt=""><img src="images/m03.jpg" alt=""><img src="images/m04.jpg" alt=""><img src="images/m05.jpg" alt="">
+      </div>
+    </div>
+
+    <div class="bottom">这是底部</div>
+
+    <script src="js/swiper.min.js"></script>
+
+    <script>
+      window.addEventListener("scroll", function () {
+        var nav = document.querySelector(".nav");
+        var swiper = document.querySelector(".swiper-container");
+        if (window.scrollY > swiper.offsetHeight) {
+          // 当页面滚动超过导航栏的高度时
+          nav.classList.add("fixed"); // 添加 'fixed' 类
+        } else {
+          nav.classList.remove("fixed"); // 移除 'fixed' 类
+        }
+      });
+
+      //转载请标注版权 Swiper中文网 www.swiper.com.cn
+      lock = false;
+      bgColor = [
+        "rgb(179, 189, 196)",
+        "rgb(180, 183, 166)",
+        "rgb(140, 152, 187)",
+      ]; //背景色
+      var mySwiper = new Swiper(".swiper-container", {
+        speed: 1300,
+        allowTouchMove: false, //禁止触摸滑动
+        parallax: true, //文字位移视差
+        on: {
+          transitionStart: function () {
+            lock = true; //锁住按钮
+            slides = this.slides;
+            imgBox = slides.eq(this.previousIndex).find(".img-box"); //图片包装器
+            imgPrev = slides.eq(this.previousIndex).find("img"); //当前图片
+            imgActive = slides.eq(this.activeIndex).find("img"); //下一张图片
+            derection = this.activeIndex - this.previousIndex;
+            this.$el.css("background-color", bgColor[this.activeIndex]); //背景颜色动画
+
+            imgBox.transform("matrix(0.6, 0, 0, 0.6, 0, 0)");
+            imgPrev.transition(1000).transform("matrix(1.2, 0, 0, 1.2, 0, 0)"); //图片缩放视差
+            this.slides
+              .eq(this.previousIndex)
+              .find("h3")
+              .transition(1000)
+              .css("color", "rgba(255,255,255,0)"); //文字透明动画
+
+            imgPrev.transitionEnd(function () {
+              imgActive
+                .transition(1300)
+                .transform("translate3d(0, 0, 0) matrix(1.2, 0, 0, 1.2, 0, 0)"); //图片位移视差
+              imgPrev
+                .transition(1300)
+                .transform(
+                  "translate3d(" +
+                    60 * derection +
+                    "%, 0, 0)  matrix(1.2, 0, 0, 1.2, 0, 0)"
+                );
+            });
+          },
+          transitionEnd: function () {
+            this.slides
+              .eq(this.activeIndex)
+              .find(".img-box")
+              .transform(" matrix(1, 0, 0, 1, 0, 0)");
+            imgActive = this.slides.eq(this.activeIndex).find("img");
+            imgActive.transition(1000).transform(" matrix(1, 0, 0, 1, 0, 0)");
+            this.slides
+              .eq(this.activeIndex)
+              .find("h3")
+              .transition(1000)
+              .css("color", "rgba(255,255,255,1)");
+
+            imgActive.transitionEnd(function () {
+              lock = false;
+            });
+            //第一个和最后一个，禁止按钮
+            if (this.activeIndex == 0) {
+              this.$el.find(".button-prev").addClass("disabled");
+            } else {
+              this.$el.find(".button-prev").removeClass("disabled");
+            }
+
+            if (this.activeIndex == this.slides.length - 1) {
+              this.$el.find(".button-next").addClass("disabled");
+            } else {
+              this.$el.find(".button-next").removeClass("disabled");
+            }
+          },
+          init: function () {
+            this.emit("transitionEnd"); //在初始化时触发一次transitionEnd事件
+          },
+        },
+      });
+
+      //不使用自带的按钮组件，使用lock控制按钮锁定时间
+      mySwiper.$el.find(".button-next").on("click", function () {
+        if (!lock) {
+          mySwiper.slideNext();
+        }
+      });
+      mySwiper.$el.find(".button-prev").on("click", function () {
+        if (!lock) {
+          mySwiper.slidePrev();
+        }
+      });
+    </script>
+  </body>
+</html>
